@@ -21,29 +21,26 @@
 
 }
 
-.arrayContainer{
+.visuals{
   background-color: grey;
-  height: 28vh;
-  width: 90%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+  height: 30vh;
+  width: 80vw;
+  position: relative;
 }
 
 .arrayBox {
   background-color: white;
-  height: 70px;
-  width: 70px;
+  width: 9vh;
+  aspect-ratio: 1/1;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-
+  transition: transform 0.7s ease-in-out;
 }
 .infoContainer{
-  height: 38vh;
-  width: 90%;
+  height: 40vh;
+  width: 80vw;
   background-color: antiquewhite;
   display: flex;
   flex-direction: row;
@@ -52,7 +49,7 @@
   gap: 10px;
 }
 
-.helper{
+.informer{
   background-color: azure;
   height: 35vh;
   width: 30%;
