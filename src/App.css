@@ -36,7 +36,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.7s ease-in-out;
+  transition: left 0.25s ease-in-out, top 0.25s ease-in-out;
 }
 .infoContainer{
   height: 40vh;
