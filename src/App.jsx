@@ -13,7 +13,8 @@ function App() {
   const vertRoom = 1 * vh;
 
   const gapVert = 0.5 * vh;
-  const arrBoxHeight = (visualsBoxHeight - 2 * vertRoom - 2 * gapVert) / 3;
+  const arrBoxHeight =
+    (visualsBoxHeight - 2 * vertRoom - 2 * gapVert) / 3;
   const gapHorz =
     (visualsBoxWidth - 2 * horizRoom - n * arrBoxHeight) / (n - 1);
 
@@ -47,6 +48,7 @@ function App() {
 
   const swap = (a, b) => {
     const steps = [
+      // Step 1: A goes up, B goes down
       (p) =>
         p.map((pos, i) =>
           i === a
@@ -55,6 +57,7 @@ function App() {
             ? { ...pos, y: pos.y + (gapVert + arrBoxHeight) }
             : pos
         ),
+      // Step 2: They move horizontally
       (p) =>
         p.map((pos, i) =>
           i === a
@@ -63,6 +66,7 @@ function App() {
             ? { ...pos, x: pos.x - (gapHorz + arrBoxHeight) }
             : pos
         ),
+      // Step 3: A goes down, B goes up
       (p) =>
         p.map((pos, i) =>
           i === a
@@ -73,14 +77,22 @@ function App() {
         ),
     ];
 
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
     (async () => {
       for (const step of steps) {
         setPositions((prev) => step(prev));
         await sleep(250);
       }
-    })();
+    })().then(() => {
+      setPositions((prev) => {
+        const copy = [...prev];
+        const temp = copy[a];
+        copy[a] = copy[b];
+        copy[b] = temp;
+        return copy;
+      });
+    });
   };
 
   const boxes = positions.map((pos) => (
@@ -92,7 +104,9 @@ function App() {
         left: `${pos.x}px`,
       }}
       onClick={() =>
-        setPositions((ps) => ps.map((p) => (p.id === pos.id ? moveUp(p) : p)))
+        setPositions((ps) =>
+          ps.map((p) => (p.id === pos.id ? moveUp(p) : p))
+        )
       }
     >
       {pos.id + 1}
@@ -105,6 +119,7 @@ function App() {
       <div className="infoContainer">
         <div className="informer pseudocode">
           <button onClick={() => swap(0, 1)}>Swap</button>
+          <button onClick={() => swap(1, 2)}>Swap</button>
         </div>
         <div className="informer controls"></div>
         <div className="informer indices"></div>
