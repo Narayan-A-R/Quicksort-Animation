@@ -1,23 +1,8 @@
 import { useState } from "react";
 import "./App.css";
-
+import { n,gapHorz,gapVert,arrBoxHeight,horizRoom,vertRoom } from "./Constants";
+import { sleep } from "./Utils";
 function App() {
-  const n = 7;
-  const vh = window.innerHeight / 100;
-  const vw = window.innerWidth / 100;
-
-  const visualsBoxHeight = 30 * vh;
-  const visualsBoxWidth = 80 * vw;
-
-  const horizRoom = 3 * vw;
-  const vertRoom = 1 * vh;
-
-  const gapVert = 0.5 * vh;
-  const arrBoxHeight =
-    (visualsBoxHeight - 2 * vertRoom - 2 * gapVert) / 3;
-  const gapHorz =
-    (visualsBoxWidth - 2 * horizRoom - n * arrBoxHeight) / (n - 1);
-
   const [positions, setPositions] = useState(
     Array.from({ length: n }, (_, i) => ({
       id: i,
@@ -46,52 +31,37 @@ function App() {
     x: pos.x - (gapHorz + arrBoxHeight),
   });
 
-  const swap = (a, b) => {
-    const steps = [
-      // Step 1: A goes up, B goes down
-      (p) =>
-        p.map((pos, i) =>
-          i === a
-            ? { ...pos, y: pos.y - (gapVert + arrBoxHeight) }
-            : i === b
-            ? { ...pos, y: pos.y + (gapVert + arrBoxHeight) }
-            : pos
-        ),
-      // Step 2: They move horizontally
-      (p) =>
-        p.map((pos, i) =>
-          i === a
-            ? { ...pos, x: pos.x + (gapHorz + arrBoxHeight) }
-            : i === b
-            ? { ...pos, x: pos.x - (gapHorz + arrBoxHeight) }
-            : pos
-        ),
-      // Step 3: A goes down, B goes up
-      (p) =>
-        p.map((pos, i) =>
-          i === a
-            ? { ...pos, y: pos.y + (gapVert + arrBoxHeight) }
-            : i === b
-            ? { ...pos, y: pos.y - (gapVert + arrBoxHeight) }
-            : pos
-        ),
-    ];
+  const swap = async (a, b) => {
+    const distance = Math.abs(b - a);
+    setPositions((prev) =>
+      prev.map((pos, i) =>
+        i === a ? moveUp(pos) : i === b ? moveDown(pos) : pos
+      )
+    );
+    await sleep(250);
 
-    const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+    for (let i = 0; i < distance; i++) {
+      setPositions((prev) =>
+        prev.map((pos, idx) =>
+          idx === a ? moveRight(pos) : idx === b ? moveLeft(pos) : pos
+        )
+      );
+      await sleep(250);
+    }
 
-    (async () => {
-      for (const step of steps) {
-        setPositions((prev) => step(prev));
-        await sleep(250);
-      }
-    })().then(() => {
-      setPositions((prev) => {
-        const copy = [...prev];
-        const temp = copy[a];
-        copy[a] = copy[b];
-        copy[b] = temp;
-        return copy;
-      });
+    setPositions((prev) =>
+      prev.map((pos, i) =>
+        i === a ? moveDown(pos) : i === b ? moveUp(pos) : pos
+      )
+    );
+    await sleep(250);
+
+    setPositions((prev) => {
+      const copy = [...prev];
+      const temp = copy[a];
+      copy[a] = copy[b];
+      copy[b] = temp;
+      return copy;
     });
   };
 
@@ -104,9 +74,7 @@ function App() {
         left: `${pos.x}px`,
       }}
       onClick={() =>
-        setPositions((ps) =>
-          ps.map((p) => (p.id === pos.id ? moveUp(p) : p))
-        )
+        setPositions((ps) => ps.map((p) => (p.id === pos.id ? moveUp(p) : p)))
       }
     >
       {pos.id + 1}
@@ -119,7 +87,7 @@ function App() {
       <div className="infoContainer">
         <div className="informer pseudocode">
           <button onClick={() => swap(0, 1)}>Swap</button>
-          <button onClick={() => swap(1, 2)}>Swap</button>
+          <button onClick={() => swap(0, 6)}>Swap</button>
         </div>
         <div className="informer controls"></div>
         <div className="informer indices"></div>
