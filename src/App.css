@@ -20,7 +20,30 @@
   align-items: center;
 
 }
-
+.pivot{
+  background-color: blue;
+  height: 1vh;
+  width: 1vh;
+  border-radius: 50%;
+  position: absolute;
+  transition: left 0.25s ease-in-out, top 0.25s ease-in-out;
+}
+.low{
+  background-color: lime;
+  height: 1vh;
+  width: 1vh;
+  border-radius: 50%;
+  position: absolute;
+  transition: left 0.25s ease-in-out, top 0.25s ease-in-out;
+}
+.high{
+  background-color: red;
+  height: 1vh;
+  width: 1vh;
+  border-radius: 50%;
+  position: absolute;
+  transition: left 0.25s ease-in-out, top 0.25s ease-in-out;
+}
 .visuals{
   background-color: grey;
   height: 30vh;

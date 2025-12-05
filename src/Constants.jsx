@@ -9,10 +9,10 @@ export const visualsBoxWidth = 80 * vw;
 export const horizRoom = 3 * vw;
 export const vertRoom = 1 * vh;
 
-export const gapVert = 0.5 * vh;
+export const gapVert = 1 * vh;
 export const arrBoxHeight = (visualsBoxHeight - 2 * vertRoom - 2 * gapVert) / 3;
 
-
-export const gapHorz = (visualsBoxWidth - 2 * horizRoom - n * arrBoxHeight) / (n - 1);
+// extra vertGap for ball
+export const gapHorz = (visualsBoxWidth -2*gapVert- 2 * horizRoom - n * arrBoxHeight) / n;
 
 
