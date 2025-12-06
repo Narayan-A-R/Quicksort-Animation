@@ -1,6 +1,12 @@
 import { useState } from "react";
 import "./App.css";
-import { gapHorz, gapVert, arrBoxHeight } from "./Constants";
+import {
+  gapHorz,
+  gapVert,
+  arrBoxHeight,
+  quicksortPsuedoCode,
+  partitionPsuedoCode,
+} from "./Constants";
 import { horizRoom, vertRoom, n } from "./Constants";
 import { vh, vw } from "./Constants";
 import { animateMoveUp, animateMoveDown } from "./Animations";
@@ -33,8 +39,28 @@ function App() {
     x: horizRoom + (n - 1) * arrBoxHeight + (n - 1) * gapHorz,
     y: vertRoom + arrBoxHeight,
   });
-
-
+  const [condition, setCondition] = useState(`while(arr[high]>pivot)`);
+  const [color, setColor] = useState("red");
+  const animatedLowHighCondition = async () => {
+    setCondition("low<=high");
+    setColor("green");
+    await sleep(250);
+  };
+  const animatedLowPivotCondition = async () => {
+    setCondition("arr[low]<=pivot");
+    setColor("green");
+    await sleep(250);
+  };
+  const animatedHighPivotCondition = async () => {
+    setCondition("arr[low]<=pivot");
+    setColor("green");
+    await sleep(250);
+  };
+  const animatedLowHighConditionFalse = async () => {
+    setCondition("low<=high");
+    setColor("red");
+    await sleep(250);
+  };
   const partition = async (start, end) => {
     initialisePivot(start, setPivotPosition);
     initialiseLow(start, setLowPosition);
@@ -44,7 +70,10 @@ function App() {
     let low = start + 1;
     let high = end;
     while (low <= high) {
+      await animatedLowHighCondition();
+      await sleep(250);
       while (arr[low] <= pivot) {
+        await animatedLowPivotCondition();
         setLowPosition((prev) => ({
           ...prev,
           x: prev.x + (gapHorz + arrBoxHeight),
@@ -53,7 +82,9 @@ function App() {
         await sleep(250);
         low++;
       }
+      await sleep(250);
       while (arr[high] > pivot) {
+        await animatedHighPivotCondition();
         setHighPosition((prev) => ({
           ...prev,
           x: prev.x - (gapHorz + arrBoxHeight),
@@ -62,10 +93,16 @@ function App() {
         await sleep(250);
         high--;
       }
+      await sleep(250);
+
       if (low <= high) {
+        await animatedLowHighCondition();
         await swapAnimated(low, high);
       }
+      await sleep(250);
     }
+    await animatedLowHighConditionFalse();
+    await sleep(250);
     await swapAnimated(start, high);
     return high;
   };
@@ -89,7 +126,7 @@ function App() {
   const swapAnimated = async (a, b) => {
     if (a === b) return;
     if (a > b) [a, b] = [b, a];
-    const distance = b-a;
+    const distance = b - a;
     animateMoveUp(a, setPositions);
     animateMoveDown(b, setPositions);
     await sleep(250);
@@ -114,12 +151,17 @@ function App() {
     await sleep(50);
   };
 
+  const conditionDiv = (
+    <div className="condition" style={{ backgroundColor: color }}>
+      {condition}
+    </div>
+  );
   const boxes = positions.map((pos) => (
     <div
       key={pos.id}
       className="arrayBox"
       style={{
-        top: `${pos.y/vh}vh`,
+        top: `${pos.y / vh}vh`,
         left: `${pos.x / vw}vw`,
       }}
     >
@@ -132,8 +174,8 @@ function App() {
       key={-1}
       className="pivot"
       style={{
-        top: `${pivotPosition.y/vh}vh`,
-        left: `${pivotPosition.x/vw}vw`,
+        top: `${pivotPosition.y / vh}vh`,
+        left: `${pivotPosition.x / vw}vw`,
       }}
     ></div>
   );
@@ -143,8 +185,8 @@ function App() {
       key={-2}
       className="low"
       style={{
-        top: `${lowPosition.y/vh}vh`,
-        left: `${lowPosition.x/vw}vw`,
+        top: `${lowPosition.y / vh}vh`,
+        left: `${lowPosition.x / vw}vw`,
       }}
     ></div>
   );
@@ -153,8 +195,8 @@ function App() {
       key={-3}
       className="high"
       style={{
-        top: `${highPosition.y/vh}vh`,
-        left: `${highPosition.x/vw}vw`,
+        top: `${highPosition.y / vh}vh`,
+        left: `${highPosition.x / vw}vw`,
       }}
     ></div>
   );
@@ -167,13 +209,17 @@ function App() {
         {boxes}
       </div>
       <div className="infoContainer">
-        <div className="informer pseudocode">
-          <button onClick={() => swapAnimated(0, 1)}>Swap</button>
+        <div className="informer quicksortPsuedocode">
+          {quicksortPsuedoCode}
+        </div>
+        <div className="informer partitionPsuedocode">
+          {partitionPsuedoCode}
+        </div>
+        <div className="informer indices">{isSorting && conditionDiv}</div>
+        <div className="controls">
           <button onClick={() => shuffle()}>shuffle</button>
           <button onClick={() => quicksort(0, n - 1)}>sort</button>
         </div>
-        <div className="informer controls"></div>
-        <div className="informer indices"></div>
       </div>
     </div>
   );
